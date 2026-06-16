@@ -1,3 +1,7 @@
+import dotenv from 'dotenv';
+
+dotenv.config();
+
 const splitCsv = (value) => {
     if (!value) return [];
     return value

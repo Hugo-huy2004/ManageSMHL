@@ -2,7 +2,6 @@ import express from 'express';
 import http from 'http';
 import mongoose from 'mongoose';
 import cors from 'cors';
-import dotenv from 'dotenv';
 import authRoutes from './routes/auth.js';
 import columnRoutes from './routes/columns.js';
 import traineeRoutes from './routes/trainees.js';
@@ -10,8 +9,6 @@ import teamRoutes from './routes/teams.js';
 import { initWebSocketServer } from './wsBroadcaster.js';
 import Column from './models/Column.js';
 import { env } from './config/env.js';
-
-dotenv.config();
 
 const app = express();
 const server = http.createServer(app);
