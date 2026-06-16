@@ -9,6 +9,7 @@ import traineeRoutes from './routes/trainees.js';
 import teamRoutes from './routes/teams.js';
 import { initWebSocketServer } from './wsBroadcaster.js';
 import Column from './models/Column.js';
+import { env } from './config/env.js';
 
 dotenv.config();
 
@@ -16,7 +17,16 @@ const app = express();
 const server = http.createServer(app);
 
 // Middlewares
-app.use(cors());
+app.use(cors({
+    origin(origin, callback) {
+        if (!origin || env.corsOrigins.length === 0 || env.corsOrigins.includes(origin)) {
+            callback(null, true);
+            return;
+        }
+        callback(new Error(`CORS blocked origin: ${origin}`));
+    },
+    credentials: true
+}));
 app.use(express.json({ limit: '50mb' }));
 app.use(express.urlencoded({ limit: '50mb', extended: true }));
 
@@ -25,10 +35,6 @@ app.use('/api/auth', authRoutes);
 app.use('/api/columns', columnRoutes);
 app.use('/api/trainees', traineeRoutes);
 app.use('/api/teams', teamRoutes);
-
-// Config
-const PORT = process.env.PORT || 5050;
-const MONGODB_URI = process.env.MONGODB_URI || 'mongodb://127.0.0.1:27017/horeb9';
 
 // Seed initial columns metadata if database collection is empty
 async function seedDefaultColumns() {
@@ -76,7 +82,7 @@ async function seedDefaultColumns() {
 }
 
 // Database Connection & Server Startup
-mongoose.connect(MONGODB_URI)
+mongoose.connect(env.mongodbUri)
     .then(async () => {
         console.log('Connected successfully to MongoDB.');
         await seedDefaultColumns();
@@ -85,8 +91,8 @@ mongoose.connect(MONGODB_URI)
         initWebSocketServer(server);
         console.log('WebSocket server attached.');
 
-        server.listen(PORT, () => {
-            console.log(`Backend server running on http://localhost:${PORT}`);
+        server.listen(env.port, env.host, () => {
+            console.log(`Backend server running on http://${env.host}:${env.port}`);
         });
     })
     .catch((err) => {

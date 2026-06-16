@@ -1,17 +1,18 @@
+import { env } from '../config/env';
+
 class DatabaseService {
     constructor() {
         this.listeners = new Set();
         this.ws = null;
         this.reconnectTimer = null;
-        this.apiUrl = '/api'; // Proxied by Vite in config
+        this.apiUrl = env.apiBaseUrl;
         
         this.connectWebSocket();
     }
 
     connectWebSocket() {
-        // Connect to WebSocket Server (port 5000 in dev, fallback to standard protocol)
-        const wsProtocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
-        const wsUrl = `${wsProtocol}//${window.location.hostname}:5050`;
+        const wsUrl = env.wsUrl;
+        if (!wsUrl) return;
 
         console.log(`Connecting Frontend WebSocket client to: ${wsUrl}`);
         this.ws = new WebSocket(wsUrl);

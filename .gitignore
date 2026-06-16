@@ -18,6 +18,9 @@ pnpm-debug.log*
 # Environment and local config
 .env
 .env.*
+!.env.example
+!backend/.env.example
+!frontend/.env.example
 *.local
 
 # System/editor files
