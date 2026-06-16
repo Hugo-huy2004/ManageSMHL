@@ -1,0 +1,6 @@
+/* Custom reset to prevent conflicts. All styles are handled inside App.css */
+body {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
